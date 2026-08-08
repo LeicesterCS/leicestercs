@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — LeicesterCS</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+</head>
+<body>
+
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">LeicesterCS</a>
+    </div>
+  </nav>
+
+  <div class="page-wrap">
+    <div class="page-header">
+      <div class="page-header-inner">
+        <div class="sec-label">// ADMIN</div>
+        <h1 class="sec-title">SITE<br/><span class="accent">CONTROL.</span></h1>
+      </div>
+    </div>
+
+    <main class="page-main">
+      <div class="container">
+
+        <!-- LOGIN -->
+        <div id="login-section" style="max-width:420px; padding:32px; border:1px solid var(--border); background:var(--bg-card);">
+          <div class="sec-label" style="margin-bottom:16px;">// ADMIN LOGIN</div>
+          <input type="password" id="admin-password" placeholder="Enter password" style="width:100%; margin-bottom:12px;">
+          <button id="login-btn" class="btn-primary">LOGIN</button>
+          <div id="login-error" style="display:none; color:#ff5c5c; font-size:0.5rem; margin-top:12px;">Invalid password</div>
+        </div>
+
+        <!-- DASHBOARD (hidden until login) -->
+        <div id="dashboard" style="display:none;">
+
+          <div style="display:flex; gap:12px; margin-bottom:32px;">
+            <button id="logout-btn" style="margin-left:auto;">LOGOUT</button>
+          </div>
+
+          <!-- EVENTS -->
+          <section id="panel-events">
+            <div style="padding:32px; border:1px solid var(--border); background:var(--bg-card); margin-bottom:32px;">
+              <div class="sec-label" style="margin-bottom:16px;">// ADD NEW EVENT</div>
+              <form id="add-event-form">
+                <input type="text" id="event-title" placeholder="Title" required style="width:100%; margin-bottom:10px;">
+                <input type="text" id="event-date" placeholder="Date (e.g., Jan 15, 2025)" required style="width:100%; margin-bottom:10px;">
+                <textarea id="event-desc" placeholder="Description" required style="width:100%; margin-bottom:10px;"></textarea>
+                <input type="text" id="event-location" placeholder="Location" style="width:100%; margin-bottom:10px;">
+                <button type="submit" class="btn-primary">ADD EVENT</button>
+              </form>
+            </div>
+
+            <div class="sec-label" style="margin-bottom:16px;">// CURRENT EVENTS</div>
+            <div id="events-list"></div>
+          </section>
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer">
+      <div class="container">
+        <div class="footer-bottom">
+          <span>© 2025 LEICESTERCS</span>
+          <span>ADMIN</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="nav.js"></script>
+  <script>
+    const loginSection = document.getElementById('login-section');
+    const dashboard = document.getElementById('dashboard');
+    const loginError = document.getElementById('login-error');
+
+    function getToken() {
+      return sessionStorage.getItem('adminToken');
+    }
+
+    function setLoggedIn(token) {
+      if (token) {
+        sessionStorage.setItem('adminToken', token);
+        loginSection.style.display = 'none';
+        dashboard.style.display = 'block';
+        loadEvents();
+      } else {
+        sessionStorage.removeItem('adminToken');
+        loginSection.style.display = 'block';
+        dashboard.style.display = 'none';
+      }
+    }
+
+    document.getElementById('login-btn').addEventListener('click', async () => {
+      const password = document.getElementById('admin-password').value;
+      loginError.style.display = 'none';
+      try {
+        const response = await fetch('/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password })
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setLoggedIn(data.token);
+        } else {
+          loginError.style.display = 'block';
+        }
+      } catch (error) {
+        loginError.textContent = 'Login failed — try again';
+        loginError.style.display = 'block';
+      }
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', () => setLoggedIn(null));
+
+    // Events
+    async function loadEvents() {
+      const list = document.getElementById('events-list');
+      list.innerHTML = 'Loading…';
+      try {
+        const response = await fetch('/events');
+        const events = await response.json();
+        list.innerHTML = events.length === 0 ? '<p>No events yet.</p>' : '';
+        events.forEach(event => {
+          const row = document.createElement('div');
+          row.className = 'event-row';
+          row.innerHTML = `
+            <div class="ev-body">
+              <div class="ev-name">${event.title}</div>
+              <div class="ev-desc">${event.description}</div>
+            </div>
+            <div class="ev-right">
+              <span class="ev-date">${event.date}</span>
+              <span class="ev-link">${event.location || 'TBD'}</span>
+            </div>
+          `;
+          list.appendChild(row);
+        });
+      } catch (error) {
+        list.innerHTML = '<p>Failed to load events.</p>';
+      }
+    }
+
+    document.getElementById('add-event-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const title = document.getElementById('event-title').value;
+      const date = document.getElementById('event-date').value;
+      const description = document.getElementById('event-desc').value;
+      const location = document.getElementById('event-location').value;
+      try {
+        const response = await fetch('/events', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-API-Key': getToken() },
+          body: JSON.stringify({ title, date, description, location })
+        });
+        const result = await response.json();
+        if (response.ok) {
+          e.target.reset();
+          loadEvents();
+        } else {
+          alert(result.detail || 'Failed to add event');
+        }
+      } catch (error) {
+        alert('Failed to add event');
+      }
+    });
+
+    // Restore session if token present
+    if (getToken()) {
+      setLoggedIn(getToken());
+    }
+  </script>
+</body>
+</html>
