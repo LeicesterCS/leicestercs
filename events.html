@@ -39,7 +39,6 @@
         <li><a href="about.html">ABOUT</a></li>
         <li><a href="partners.html">PARTNERS</a></li>
         <li><a href="events.html">EVENTS</a></li>
-        <li><a href="shop.html">SHOP</a></li>
         <li><a href="gallery.html">GALLERY</a></li>
         <li><a href="team.html">TEAM</a></li>
         <li><a href="ideas.html">IDEAS</a></li>
@@ -56,7 +55,6 @@
     <a href="about.html"    class="mm-link">ABOUT</a>
     <a href="partners.html" class="mm-link">PARTNERS</a>
     <a href="events.html"   class="mm-link">EVENTS</a>
-    <a href="shop.html"     class="mm-link">SHOP</a>
     <a href="gallery.html"  class="mm-link">GALLERY</a>
     <a href="team.html"     class="mm-link">TEAM</a>
     <a href="ideas.html"    class="mm-link">IDEAS</a>
@@ -75,25 +73,6 @@
       <div class="container">
         <div class="events-list" id="events-list">
           <!-- Events will be loaded here -->
-        </div>
-
-        <div id="admin-section" style="display: none; margin-top:48px; padding:32px; border:1px solid var(--border); background:var(--bg-card);">
-          <div id="login-form">
-            <div class="sec-label" style="margin-bottom:16px;">// ADMIN LOGIN</div>
-            <input type="password" id="admin-password" placeholder="Enter password">
-            <button id="login-btn">Login</button>
-          </div>
-          <div id="add-event-section" style="display: none;">
-            <div class="sec-label" style="margin-bottom:16px;">// ADD NEW EVENT</div>
-            <form id="add-event-form">
-              <input type="text" id="event-title" placeholder="Title" required>
-              <input type="text" id="event-date" placeholder="Date (e.g., Jan 15, 2025)" required>
-              <textarea id="event-desc" placeholder="Description" required></textarea>
-              <input type="text" id="event-location" placeholder="Location">
-              <button type="submit">Add Event</button>
-            </form>
-          </div>
-          <button id="logout-btn" style="display: none; margin-top: 16px;">Logout</button>
         </div>
 
         <div style="margin-top:48px; padding:32px; border:1px solid var(--border); background:var(--bg-card);">
@@ -164,87 +143,6 @@
         list.innerHTML = '<p>Failed to load events.</p>';
       }
       hideLoading(list);
-    }
-
-    // Check if admin
-    if (window.location.search.includes('admin=true')) {
-      document.getElementById('admin-section').style.display = 'block';
-      document.getElementById('login-btn').addEventListener('click', async () => {
-        const password = document.getElementById('admin-password').value;
-        try {
-          const response = await fetch('/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ password })
-          });
-          if (response.ok) {
-            const data = await response.json();
-            localStorage.setItem('adminToken', data.token);
-            setAdminState(true);
-            showToast('Logged in successfully', 'success');
-          } else {
-            showToast('Invalid password', 'error');
-          }
-        } catch (error) {
-          showToast('Login failed', 'error');
-        }
-      });
-
-      const loginForm = document.getElementById('login-form');
-      const addEventSection = document.getElementById('add-event-section');
-      const logoutBtn = document.getElementById('logout-btn');
-
-      function setAdminState(loggedIn) {
-        if (loggedIn) {
-          loginForm.style.display = 'none';
-          addEventSection.style.display = 'block';
-          logoutBtn.style.display = 'inline-flex';
-        } else {
-          loginForm.style.display = 'block';
-          addEventSection.style.display = 'none';
-          logoutBtn.style.display = 'none';
-          localStorage.removeItem('adminToken');
-        }
-      }
-
-      // Check if already logged in
-      const token = localStorage.getItem('adminToken');
-      setAdminState(Boolean(token));
-
-      logoutBtn.addEventListener('click', () => {
-        setAdminState(false);
-        showToast('Logged out', 'success');
-      });
-
-      document.getElementById('add-event-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const form = e.target;
-        showLoading(form);
-        const title = document.getElementById('event-title').value;
-        const date = document.getElementById('event-date').value;
-        const description = document.getElementById('event-desc').value;
-        const location = document.getElementById('event-location').value;
-        const token = localStorage.getItem('adminToken');
-        try {
-          const response = await fetch('/events', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-API-Key': token
-            },
-            body: JSON.stringify({ title, date, description, location })
-          });
-          const result = await response.json();
-          showToast(result.message, response.ok ? 'success' : 'error');
-          if (response.ok) {
-            form.reset();
-            loadEvents();
-          }
-        } catch (error) {
-          showToast('Failed to add event', 'error');
-        }
-        hideLoading(form);
-      });
     }
 
     loadEvents();
