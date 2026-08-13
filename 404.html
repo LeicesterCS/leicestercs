@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>404 — Page Not Found | LeicesterCS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="apple-touch-icon" sizes="192x192" href="favicon-192.png" />
+
+  <style>
+    .error-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: calc(100vh - var(--nav-h));
+      padding: 48px 32px;
+      text-align: center;
+    }
+
+    .error-code {
+      font-size: 8rem;
+      font-weight: bold;
+      background: linear-gradient(135deg, var(--teal), var(--pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 30px rgba(87,179,168,0.3), 0 0 60px rgba(255,61,154,0.2);
+      margin: 0;
+      line-height: 1;
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { 
+        text-shadow: 0 0 30px rgba(87,179,168,0.3), 0 0 60px rgba(255,61,154,0.2);
+      }
+      50% { 
+        text-shadow: 0 0 40px rgba(87,179,168,0.5), 0 0 80px rgba(255,61,154,0.4);
+      }
+    }
+
+    .error-title {
+      font-size: 2rem;
+      color: var(--white);
+      margin: 32px 0 16px;
+      letter-spacing: 0.1em;
+    }
+
+    .error-subtitle {
+      font-size: 1.1rem;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-weight: 400;
+      color: var(--grey);
+      margin: 0 0 48px;
+      letter-spacing: 0.02em;
+      line-height: 1.8;
+    }
+
+    .error-message {
+      font-size: 0.85rem;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-weight: 500;
+      color: var(--teal);
+      margin: 24px 0;
+      text-shadow: var(--glow-t-sm);
+      letter-spacing: 0.05em;
+    }
+
+    .error-actions {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 48px;
+    }
+
+    .error-actions a {
+      display: inline-block;
+      padding: 14px 24px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.75rem;
+      border: 2px solid;
+      letter-spacing: 0.08em;
+      text-decoration: none;
+      transition: all 0.15s;
+      cursor: pointer;
+    }
+
+    .error-actions .btn-home {
+      color: var(--bg);
+      background: var(--teal);
+      border-color: var(--teal);
+    }
+
+    .error-actions .btn-home:hover {
+      background: transparent;
+      color: var(--teal);
+      text-shadow: var(--glow-t-sm);
+    }
+
+    .error-actions .btn-discord {
+      color: var(--pink);
+      background: transparent;
+      border-color: var(--pink);
+    }
+
+    .error-actions .btn-discord:hover {
+      background: var(--pink);
+      color: var(--bg);
+      text-shadow: none;
+    }
+
+    .pixelated-decoration {
+      margin: 48px 0;
+      font-size: 2rem;
+      color: var(--teal);
+      animation: float 3s ease-in-out infinite;
+      text-shadow: var(--glow-t);
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .error-footer {
+      margin-top: 64px;
+      font-size: 0.8rem;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-weight: 400;
+      color: var(--grey);
+      letter-spacing: 0.05em;
+    }
+
+    @media (max-width: 768px) {
+      .error-code {
+        font-size: 5rem;
+      }
+
+      .error-title {
+        font-size: 1.4rem;
+      }
+
+      .error-subtitle {
+        font-size: 0.65rem;
+      }
+
+      .error-actions {
+        flex-direction: column;
+      }
+
+      .error-actions a {
+        width: 100%;
+        text-align: center;
+      }
+
+      .pixelated-decoration {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">LeicesterCS</a>
+      <ul class="nav-links">
+        <li><a href="about.html">ABOUT</a></li>
+        <li><a href="partners.html">PARTNERS</a></li>
+        <li><a href="events.html">EVENTS</a></li>
+        <li><a href="shop.html">SHOP</a></li>
+        <li><a href="gallery.html">GALLERY</a></li>
+        <li><a href="team.html">TEAM</a></li>
+        <li><a href="ideas.html">IDEAS</a></li>
+        <li><a href="join.html">JOIN</a></li>
+      </ul>
+      <a href="https://discord.gg/VAg2SQfhEq" target="_blank" class="nav-cta">DISCORD</a>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div id="mobileMenu" class="mobile-menu">
+    <a href="about.html" class="mm-link">ABOUT</a>
+    <a href="partners.html" class="mm-link">PARTNERS</a>
+    <a href="events.html" class="mm-link">EVENTS</a>
+    <a href="shop.html" class="mm-link">SHOP</a>
+    <a href="gallery.html" class="mm-link">GALLERY</a>
+    <a href="team.html" class="mm-link">TEAM</a>
+    <a href="ideas.html" class="mm-link">IDEAS</a>
+    <a href="join.html" class="mm-link">JOIN</a>
+    <a href="https://discord.gg/VAg2SQfhEq" target="_blank" class="mm-link">DISCORD</a>
+  </div>
+
+  <div class="page-wrap">
+    <main class="page-main">
+      <div class="error-container">
+        <h1 class="error-code">404</h1>
+
+        <div class="pixelated-decoration">▀ █ █ ▀</div>
+
+        <h2 class="error-title">PAGE NOT FOUND</h2>
+
+        <p class="error-subtitle">
+          Looks like you've ventured into uncharted territory.<br />
+          The page you're looking for doesn't exist.
+        </p>
+
+        <p class="error-message">
+          &gt; SYSTEM ALERT: PAGE NOT LOCATED IN DATABASE
+        </p>
+
+        <div class="error-actions">
+          <a href="index.html" class="btn-home">RETURN HOME</a>
+          <a href="https://discord.gg/VAg2SQfhEq" target="_blank" class="btn-discord">DISCORD</a>
+        </div>
+
+        <div class="pixelated-decoration">▄ █ █ ▄</div>
+
+        <p class="error-footer">
+          ERROR CODE: 404 | STATUS: NOT FOUND
+        </p>
+      </div>
+    </main>
+  </div>
+
+  <script src="nav.js"></script>
+</body>
+
+</html>
