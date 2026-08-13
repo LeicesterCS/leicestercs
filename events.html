@@ -127,8 +127,11 @@
         events.forEach(event => {
           const row = document.createElement('div');
           row.className = 'event-row';
+          const isOngoing = event.date === 'Ongoing';
+          const tagClass = isOngoing ? 'ev-tag ongoing' : 'ev-tag live';
+          const tagText = isOngoing ? 'ONGOING' : 'UPCOMING';
           row.innerHTML = `
-            <span class="ev-tag live">UPCOMING</span>
+            <span class="${tagClass}">${tagText}</span>
             <div class="ev-body">
               <div class="ev-name">${event.title}</div>
               <div class="ev-desc">${event.description}</div>

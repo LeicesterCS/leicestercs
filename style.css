@@ -481,6 +481,7 @@ a:hover { color: var(--pink); }
   white-space: nowrap;
 }
 .ev-tag.live { border-color: var(--teal); color: var(--teal); text-shadow: var(--glow-t-sm); }
+.ev-tag.ongoing { border-color: var(--pink); color: var(--pink); text-shadow: var(--glow-p-sm); }
 .ev-name { font-size: 1rem; font-family: var(--font-body); font-weight: 600; color: var(--white); margin-bottom: 8px; letter-spacing: 0.02em; text-shadow: var(--glow-w); }
 .ev-desc { font-size: 0.95rem; font-family: var(--font-body); font-weight: 400; color: var(--grey); line-height: 1.7; }
 .ev-right {
