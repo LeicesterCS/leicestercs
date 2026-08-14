@@ -1,6 +1,7 @@
 from http.server import BaseHTTPRequestHandler
 import json
 import os
+from urllib.parse import urlparse, parse_qs
 from supabase import create_client
 
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
@@ -26,6 +27,11 @@ class handler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", "application/json")
         self.end_headers()
         self.wfile.write(json.dumps(payload).encode())
+
+    def _get_id_param(self):
+        parsed = urlparse(self.path)
+        qs = parse_qs(parsed.query)
+        return qs.get("id", [None])[0]
 
     def do_GET(self):
         try:
@@ -59,11 +65,65 @@ class handler(BaseHTTPRequestHandler):
                 "title": data.get("title"),
                 "description": data.get("description"),
                 "event_date": data.get("event_date"),
-                "event_time": data.get("event_time"),
+                "event_time": data.get("event_time") or None,
                 "location": data.get("location"),
             }
 
             result = supabase.table("events").insert(new_event).execute()
             self._send_json(201, result.data)
+        except Exception as e:
+            self._send_json(500, {"error": str(e)})
+
+    def do_PUT(self):
+        if not is_admin(self.headers):
+            self._send_json(401, {"error": "Not authorized"})
+            return
+
+        event_id = self._get_id_param()
+        if not event_id:
+            self._send_json(400, {"error": "Missing event id"})
+            return
+
+        try:
+            content_length = int(self.headers.get("Content-Length", 0))
+            body = self.rfile.read(content_length)
+            data = json.loads(body)
+
+            updated_event = {
+                "title": data.get("title"),
+                "description": data.get("description"),
+                "event_date": data.get("event_date"),
+                "event_time": data.get("event_time") or None,
+                "location": data.get("location"),
+            }
+
+            result = (
+                supabase.table("events")
+                .update(updated_event)
+                .eq("id", event_id)
+                .execute()
+            )
+            self._send_json(200, result.data)
+        except Exception as e:
+            self._send_json(500, {"error": str(e)})
+
+    def do_DELETE(self):
+        if not is_admin(self.headers):
+            self._send_json(401, {"error": "Not authorized"})
+            return
+
+        event_id = self._get_id_param()
+        if not event_id:
+            self._send_json(400, {"error": "Missing event id"})
+            return
+
+        try:
+            result = (
+                supabase.table("events")
+                .delete()
+                .eq("id", event_id)
+                .execute()
+            )
+            self._send_json(200, {"success": True})
         except Exception as e:
             self._send_json(500, {"error": str(e)})

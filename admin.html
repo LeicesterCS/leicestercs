@@ -51,7 +51,8 @@
               <div class="sec-label" style="margin-bottom:16px;">// ADD NEW EVENT</div>
               <form id="add-event-form">
                 <input type="text" id="event-title" placeholder="Title" required style="width:100%; margin-bottom:10px;">
-                <input type="text" id="event-date" placeholder="Date (e.g., Nov 15, 2026)" required style="width:100%; margin-bottom:10px;">
+                <input type="date" id="event-date" required style="width:100%; margin-bottom:10px;">
+                <input type="time" id="event-time" style="width:100%; margin-bottom:10px;">
                 <textarea id="event-desc" placeholder="Description" required style="width:100%; margin-bottom:10px;"></textarea>
                 <input type="text" id="event-location" placeholder="Location" style="width:100%; margin-bottom:10px;">
                 <button type="submit" class="btn-primary">ADD EVENT</button>
@@ -124,31 +125,105 @@
 
     // Events
     async function loadEvents() {
-      const list = document.getElementById('events-list');
-      list.innerHTML = 'Loading…';
-      try {
-        const response = await fetch('/api/events');
-        const events = await response.json();
-        list.innerHTML = events.length === 0 ? '<p>No events yet.</p>' : '';
-        events.forEach(event => {
-          const row = document.createElement('div');
-          row.className = 'event-row';
-          row.innerHTML = `
-            <div class="ev-body">
-              <div class="ev-name">${event.title}</div>
-              <div class="ev-desc">${event.description}</div>
-            </div>
-            <div class="ev-right">
-              <span class="ev-date">${event.date}</span>
-              <span class="ev-link">${event.location || 'TBD'}</span>
-            </div>
-          `;
-          list.appendChild(row);
-        });
-      } catch (error) {
-        list.innerHTML = '<p>Failed to load events.</p>';
-      }
+  const list = document.getElementById('events-list');
+  list.innerHTML = 'Loading…';
+  try {
+    const response = await fetch('/api/events');
+    const events = await response.json();
+    list.innerHTML = events.length === 0 ? '<p>No events yet.</p>' : '';
+    events.forEach(event => {
+      const row = document.createElement('div');
+      row.className = 'event-row';
+      const timeDisplay = event.event_time || 'Time will be updated';
+      row.innerHTML = `
+        <div class="ev-body">
+          <div class="ev-name">${event.title}</div>
+          <div class="ev-desc">${event.description}</div>
+        </div>
+        <div class="ev-right">
+          <span class="ev-date">${event.event_date} — ${timeDisplay}</span>
+          <span class="ev-link">${event.location || 'TBD'}</span>
+          <button class="ev-edit-btn" data-id="${event.id}">EDIT</button>
+          <button class="ev-delete-btn" data-id="${event.id}">DELETE</button>
+        </div>
+      `;
+      list.appendChild(row);
+    });
+
+    document.querySelectorAll('.ev-edit-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const event = events.find(ev => ev.id == btn.dataset.id);
+        document.getElementById('event-id').value = event.id;
+        document.getElementById('event-title').value = event.title;
+        document.getElementById('event-date').value = event.event_date;
+        document.getElementById('event-time').value = event.event_time || '';
+        document.getElementById('event-desc').value = event.description || '';
+        document.getElementById('event-location').value = event.location || '';
+        document.getElementById('event-submit-btn').textContent = 'SAVE CHANGES';
+        document.getElementById('event-cancel-btn').style.display = 'inline-block';
+        window.scrollTo({ top: document.getElementById('add-event-form').offsetTop - 100, behavior: 'smooth' });
+      });
+    });
+
+    document.querySelectorAll('.ev-delete-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('Delete this event?')) return;
+        try {
+          const response = await fetch(`/api/events?id=${btn.dataset.id}`, { method: 'DELETE' });
+          if (response.ok) {
+            loadEvents();
+          } else {
+            const result = await response.json();
+            alert(result.error || 'Failed to delete event');
+          }
+        } catch (error) {
+          alert('Failed to delete event');
+        }
+      });
+    });
+  } catch (error) {
+    list.innerHTML = '<p>Failed to load events.</p>';
+  }
+}
+
+document.getElementById('event-cancel-btn').addEventListener('click', () => {
+  document.getElementById('add-event-form').reset();
+  document.getElementById('event-id').value = '';
+  document.getElementById('event-submit-btn').textContent = 'ADD EVENT';
+  document.getElementById('event-cancel-btn').style.display = 'none';
+});
+
+document.getElementById('add-event-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const id = document.getElementById('event-id').value;
+  const title = document.getElementById('event-title').value;
+  const date = document.getElementById('event-date').value;
+  const time = document.getElementById('event-time').value;
+  const description = document.getElementById('event-desc').value;
+  const location = document.getElementById('event-location').value;
+
+  try {
+    const url = id ? `/api/events?id=${id}` : '/api/events';
+    const method = id ? 'PUT' : 'POST';
+    const response = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, event_date: date, event_time: time, description, location })
+    });
+    const result = await response.json();
+    if (response.ok) {
+      e.target.reset();
+      document.getElementById('event-id').value = '';
+      document.getElementById('event-submit-btn').textContent = 'ADD EVENT';
+      document.getElementById('event-cancel-btn').style.display = 'none';
+      loadEvents();
+    } else {
+      alert(result.error || 'Failed to save event');
     }
+  } catch (error) {
+    alert('Failed to save event');
+  }
+});
 
     document.getElementById('add-event-form').addEventListener('submit', async (e) => {
       e.preventDefault();
