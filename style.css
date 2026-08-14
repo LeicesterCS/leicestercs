@@ -1201,3 +1201,149 @@ a:hover { color: var(--pink); }
   top: 50%;
   transform: translateY(-50%);
 }
+/* LOGIN BOX */
+#login-section {
+  max-width: 480px;
+  margin: 60px auto;
+  padding: 48px 40px;
+  border: 2px solid var(--border);
+  background: var(--bg-card);
+  box-shadow: 0 0 0 1px rgba(87, 179, 168, 0.15), 0 8px 32px rgba(0, 0, 0, 0.4);
+  border-radius: 4px;
+}
+
+#login-section .sec-label {
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  color: #57B3A8;
+  margin-bottom: 24px;
+}
+
+#admin-password {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.9rem;
+  padding: 16px 18px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 3px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#admin-password:focus {
+  outline: none;
+  border-color: #57B3A8;
+  box-shadow: 0 0 0 3px rgba(87, 179, 168, 0.15);
+}
+
+#login-btn {
+  width: 100%;
+  padding: 16px;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+}
+
+/* ADD/EDIT EVENT FORM BOX */
+#panel-events > div:first-child {
+  max-width: 640px;
+  margin: 0 auto 48px;
+  padding: 48px 40px;
+  border: 2px solid var(--border);
+  background: var(--bg-card);
+  box-shadow: 0 0 0 1px rgba(255, 61, 154, 0.12), 0 8px 32px rgba(0, 0, 0, 0.4);
+  border-radius: 4px;
+}
+
+#panel-events .sec-label {
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  color: #ff3d9a;
+  margin-bottom: 24px;
+}
+
+#add-event-form input[type="text"],
+#add-event-form input[type="date"],
+#add-event-form input[type="time"],
+#add-event-form textarea {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.85rem;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 3px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#add-event-form input[type="text"]:focus,
+#add-event-form input[type="date"]:focus,
+#add-event-form input[type="time"]:focus,
+#add-event-form textarea:focus {
+  outline: none;
+  border-color: #ff3d9a;
+  box-shadow: 0 0 0 3px rgba(255, 61, 154, 0.12);
+}
+
+#add-event-form textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+#event-submit-btn {
+  padding: 14px 28px;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+}
+.ev-edit-btn,
+.ev-delete-btn {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: 8px;
+}
+
+.ev-edit-btn:hover {
+  border-color: #57B3A8;
+  color: #57B3A8;
+}
+
+.ev-delete-btn:hover {
+  border-color: #ff3d9a;
+  color: #ff3d9a;
+}
+
+#event-cancel-btn {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  padding: 10px 20px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  margin-left: 12px;
+}
+
+#event-cancel-btn:hover {
+  border-color: #ff3d9a;
+  color: #ff3d9a;
+}
+
+.event-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.ev-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
