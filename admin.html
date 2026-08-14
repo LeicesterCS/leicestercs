@@ -51,7 +51,7 @@
               <div class="sec-label" style="margin-bottom:16px;">// ADD NEW EVENT</div>
               <form id="add-event-form">
                 <input type="text" id="event-title" placeholder="Title" required style="width:100%; margin-bottom:10px;">
-                <input type="text" id="event-date" placeholder="Date (e.g., Jan 15, 2025)" required style="width:100%; margin-bottom:10px;">
+                <input type="text" id="event-date" placeholder="Date (e.g., Nov 15, 2026)" required style="width:100%; margin-bottom:10px;">
                 <textarea id="event-desc" placeholder="Description" required style="width:100%; margin-bottom:10px;"></textarea>
                 <input type="text" id="event-location" placeholder="Location" style="width:100%; margin-bottom:10px;">
                 <button type="submit" class="btn-primary">ADD EVENT</button>
@@ -160,7 +160,7 @@
         const response = await fetch('/api/events', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ title, date, description, location })
+          body: JSON.stringify({ title, event_date: date, description, location })
         });
         const result = await response.json();
         if (response.ok) {
