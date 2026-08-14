@@ -10,6 +10,9 @@ from supabase import create_client
 DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL")
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
 SUPABASE_SERVICE_ROLE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
+print("DEBUG webhook set:", bool(DISCORD_WEBHOOK_URL), repr(DISCORD_WEBHOOK_URL))
+
+
 
 supabase = create_client(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
 
@@ -120,7 +123,10 @@ class handler(BaseHTTPRequestHandler):
             req = urllib.request.Request(
                 DISCORD_WEBHOOK_URL,
                 data=json.dumps(discord_payload).encode(),
-                headers={"Content-Type": "application/json"},
+                headers={
+                    "Content-Type": "application/json",
+                    "User-Agent": "Mozilla/5.0 (compatible; LeicesterCS-Bot/1.0)",
+                },
                 method="POST",
             )
             urllib.request.urlopen(req)
