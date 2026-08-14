@@ -61,60 +61,7 @@ function hideLoading(element) {
   element.classList.remove('loading');
 }
 
-// Toast notifications
-function showToast(message, type = 'success') {
-  const container = document.getElementById('toast-container') || createToastContainer();
-  const toast = document.createElement('div');
-  toast.className = `toast toast-${type}`;
-  toast.innerHTML = `
-    <span class="toast-mark">${type === 'success' ? '✓' : '✗'}</span>
-    <span class="toast-text">${message}</span>
-  `;
-  container.appendChild(toast);
-  setTimeout(() => toast.classList.add('toast-in'), 10);
-  setTimeout(() => {
-    toast.classList.remove('toast-in');
-    setTimeout(() => toast.remove(), 300);
-  }, 3000);
-}
-
-function createToastContainer() {
-  const container = document.createElement('div');
-  container.id = 'toast-container';
-  document.body.appendChild(container);
-  return container;
-}
-
-// Enhanced form submissions with loading
 document.addEventListener('DOMContentLoaded', () => {
-  // Ideas form
-  const ideasForm = document.getElementById('ideaForm');
-  if (ideasForm) {
-    ideasForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      showLoading(ideasForm);
-      const formData = new FormData(ideasForm);
-      const data = {
-        name: formData.get('name') || 'Anonymous',
-        category: formData.get('type') || 'General',
-        idea: formData.get('idea')
-      };
-      try {
-        const response = await fetch('/api/submit_ideas', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        });
-        const result = await response.json();
-        showToast(result.message, response.ok ? 'success' : 'error');
-        if (response.ok) ideasForm.reset();
-      } catch (error) {
-        showToast('Failed to submit idea', 'error');
-      }
-      hideLoading(ideasForm);
-    });
-  }
-
   // Add fade-in to dynamic content
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -164,35 +111,36 @@ if (ideaForm) {
   ideaForm.addEventListener('submit', async function (e) {
     e.preventDefault();
     const btn = document.getElementById('ideaBtn');
-    const name = document.getElementById('ideaName')?.value || 'Anonymous';
-    const category = document.getElementById('ideaCategory')?.value || 'General';
-    const idea = document.getElementById('ideaText')?.value;
-    
+
     btn.textContent = 'SENDING...';
     btn.disabled = true;
-    
+
+    const formData = new FormData(this);
+    const name = formData.get('name') || 'Anonymous';
+    const category = formData.get('type') || 'General';
+    const idea = formData.get('idea');
+
     try {
       const response = await fetch('/api/submit_ideas', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, category, idea })
       });
-      
+
+      const result = await response.json().catch(() => ({}));
+
       if (response.ok) {
-        btn.textContent = 'SUBMIT';
-        btn.disabled = false;
         this.reset();
         showToast('IDEA RECEIVED. THE COMMITTEE WILL TAKE A LOOK.');
       } else {
-        throw new Error('Server error');
+        showToast(result.error || 'SOMETHING WENT WRONG. TRY AGAIN LATER.', 3500, true);
       }
     } catch (err) {
-      // DEMO MODE: Show success even without server (remove this catch block when server is running)
+      console.error('Idea submission failed:', err);
+      showToast('SOMETHING WENT WRONG. TRY AGAIN LATER.', 3500, true);
+    } finally {
       btn.textContent = 'SUBMIT';
       btn.disabled = false;
-      this.reset();
-      showToast('IDEA RECEIVED. THE COMMITTEE WILL TAKE A LOOK.');
-      console.log('Demo mode: Simulated successful submission. Remove this catch block when server is running.');
     }
   });
 }
@@ -278,7 +226,7 @@ if (ideaForm) {
       widget.classList.add('dw-loaded');
     })
     .catch(() => {
-      
+
     });
 })();
 
