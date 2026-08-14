@@ -86,9 +86,9 @@
       return sessionStorage.getItem('adminToken');
     }
 
-    function setLoggedIn(token) {
-      if (token) {
-        sessionStorage.setItem('adminToken', token);
+    function setLoggedIn(loggedIn) {
+      if (loggedIn) {
+        sessionStorage.setItem('adminToken', 'authenticated');
         loginSection.style.display = 'none';
         dashboard.style.display = 'block';
         loadEvents();
@@ -103,14 +103,14 @@
       const password = document.getElementById('admin-password').value;
       loginError.style.display = 'none';
       try {
-        const response = await fetch('/login', {
+        const response = await fetch('/api/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ password })
         });
         if (response.ok) {
           const data = await response.json();
-          setLoggedIn(data.token);
+          setLoggedIn(true);
         } else {
           loginError.style.display = 'block';
         }
@@ -127,7 +127,7 @@
       const list = document.getElementById('events-list');
       list.innerHTML = 'Loading…';
       try {
-        const response = await fetch('/events');
+        const response = await fetch('/api/events');
         const events = await response.json();
         list.innerHTML = events.length === 0 ? '<p>No events yet.</p>' : '';
         events.forEach(event => {
@@ -157,9 +157,9 @@
       const description = document.getElementById('event-desc').value;
       const location = document.getElementById('event-location').value;
       try {
-        const response = await fetch('/events', {
+        const response = await fetch('/api/events', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'X-API-Key': getToken() },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ title, date, description, location })
         });
         const result = await response.json();

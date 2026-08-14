@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
         idea: formData.get('idea')
       };
       try {
-        const response = await fetch('/submit_idea', {
+        const response = await fetch('/api/submit_ideas', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)
@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
-  document.querySelectorAll('.shop-card, .event-row').forEach(el => observer.observe(el));
+  document.querySelectorAll('.event-row').forEach(el => observer.observe(el));
 });
 
 // ─── PARTNER SCROLL GLOW ──────────────────────
@@ -172,7 +172,7 @@ if (ideaForm) {
     btn.disabled = true;
     
     try {
-      const response = await fetch('/submit_idea', {
+      const response = await fetch('/api/submit_ideas', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, category, idea })
@@ -266,7 +266,7 @@ if (ideaForm) {
   const widget = document.getElementById('discord-widget');
   if (!widget) return;
 
-  const GUILD_ID = '1234567890'; // ← replace with your actual Discord server ID
+  const GUILD_ID = '939530345248874496';
 
   fetch(`https://discord.com/api/guilds/${GUILD_ID}/widget.json`)
     .then(r => r.json())
@@ -278,7 +278,7 @@ if (ideaForm) {
       widget.classList.add('dw-loaded');
     })
     .catch(() => {
-      // silently fail — widget just shows static fallback
+      
     });
 })();
 

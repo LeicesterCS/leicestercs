@@ -506,49 +506,6 @@ a:hover { color: var(--pink); }
 }
 .ev-link:hover { color: var(--teal); text-shadow: var(--glow-t-sm); }
 
-/* === SHOP === */
-.shop-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 2px;
-  margin-bottom: 28px;
-}
-.shop-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  overflow: hidden;
-  transition: border-color 0.15s;
-}
-.shop-card:hover { border-color: var(--teal); }
-.shop-img {
-  aspect-ratio: 1;
-  background: var(--bg-alt);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  border-bottom: 1px solid var(--border);
-}
-.shop-ph-icon { font-size: 2rem; opacity: 0.5; }
-.shop-ph-txt  { font-size: 0.75rem; font-family: var(--font-body); font-weight: 500; color: var(--grey); letter-spacing: 0.02em; }
-.shop-info    { padding: 16px 14px; }
-.shop-name    { font-size: 0.95rem; font-family: var(--font-body); font-weight: 600; color: var(--white); margin-bottom: 8px; line-height: 1.6; text-shadow: var(--glow-w); }
-.shop-desc    { font-size: 0.85rem; font-family: var(--font-body); font-weight: 400; color: var(--grey); line-height: 1.6; margin-bottom: 14px; }
-.shop-foot    { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px; }
-.shop-price   { font-size: 1rem; font-family: var(--font); color: var(--teal); text-shadow: var(--glow-t-sm); }
-.badge-soon {
-  font-size: 0.7rem;
-  font-family: var(--font-body);
-  font-weight: 500;
-  color: var(--grey);
-  border: 1px solid var(--border);
-  padding: 3px 7px;
-  letter-spacing: 0.02em;
-}
-.shop-note { font-size: 0.9rem; font-family: var(--font-body); font-weight: 400; color: var(--grey); line-height: 1.8; border-top: 1px solid var(--border); padding-top: 20px; letter-spacing: 0.02em; }
-.shop-note a { color: var(--teal); text-shadow: var(--glow-t-sm); }
-
 /* === GALLERY === */
 .gallery-layout {
   display: grid;
@@ -811,7 +768,7 @@ a:hover { color: var(--pink); }
 /* === RESPONSIVE === */
 @media (max-width: 1100px) {
   .team-grid { grid-template-columns: repeat(3, 1fr); }
-  .shop-grid { grid-template-columns: repeat(2, 1fr); }
+
   .pillars   { grid-template-columns: 1fr 1fr; }
 }
 
@@ -853,7 +810,7 @@ a:hover { color: var(--pink); }
 
   .pillars   { grid-template-columns: 1fr; }
   .pillar    { padding: 18px 14px; }
-  .shop-grid { grid-template-columns: 1fr 1fr; gap: 2px; }
+
   .gallery-mosaic { grid-template-columns: 1fr 1fr; gap: 2px; }
   .gm-tile.tall { grid-row: auto; min-height: 160px; }
   .gm-tile.wide { grid-column: auto; }
@@ -875,7 +832,7 @@ a:hover { color: var(--pink); }
 
 @media (max-width: 420px) {
   .hero-title span { font-size: clamp(1.3rem, 11vw, 1.8rem); }
-  .shop-grid  { grid-template-columns: 1fr; }
+
   .team-grid  { grid-template-columns: 1fr; }
   .team-card  { height: 280px; }
   .gallery-mosaic { grid-template-columns: 1fr; }
