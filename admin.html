@@ -50,12 +50,14 @@
             <div style="padding:32px; border:1px solid var(--border); background:var(--bg-card); margin-bottom:32px;">
               <div class="sec-label" style="margin-bottom:16px;">// ADD NEW EVENT</div>
               <form id="add-event-form">
+                <input type="hidden" id="event-id" value="">
                 <input type="text" id="event-title" placeholder="Title" required style="width:100%; margin-bottom:10px;">
                 <input type="date" id="event-date" required style="width:100%; margin-bottom:10px;">
                 <input type="time" id="event-time" style="width:100%; margin-bottom:10px;">
                 <textarea id="event-desc" placeholder="Description" required style="width:100%; margin-bottom:10px;"></textarea>
                 <input type="text" id="event-location" placeholder="Location" style="width:100%; margin-bottom:10px;">
-                <button type="submit" class="btn-primary">ADD EVENT</button>
+                <button type="submit" id="event-submit-btn" class="btn-primary">ADD EVENT</button>
+                <button type="button" id="event-cancel-btn" style="display:none; margin-left:8px;">CANCEL</button>
               </form>
             </div>
 
@@ -224,30 +226,6 @@ document.getElementById('add-event-form').addEventListener('submit', async (e) =
     alert('Failed to save event');
   }
 });
-
-    document.getElementById('add-event-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const title = document.getElementById('event-title').value;
-      const date = document.getElementById('event-date').value;
-      const description = document.getElementById('event-desc').value;
-      const location = document.getElementById('event-location').value;
-      try {
-        const response = await fetch('/api/events', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ title, event_date: date, description, location })
-        });
-        const result = await response.json();
-        if (response.ok) {
-          e.target.reset();
-          loadEvents();
-        } else {
-          alert(result.detail || 'Failed to add event');
-        }
-      } catch (error) {
-        alert('Failed to add event');
-      }
-    });
 
     // Restore session if token present
     if (getToken()) {
