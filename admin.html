@@ -53,6 +53,8 @@
                 <input type="hidden" id="event-id" value="">
                 <input type="text" id="event-title" placeholder="Title" required style="width:100%; margin-bottom:10px;">
                 <input type="date" id="event-date" required style="width:100%; margin-bottom:10px;">
+                <label style="display:block; font-size:0.4rem; color:var(--grey); margin-bottom:4px;">End date (leave blank for single-day events)</label>
+                <input type="date" id="event-end-date" style="width:100%; margin-bottom:10px;">
                 <input type="time" id="event-time" style="width:100%; margin-bottom:10px;">
                 <textarea id="event-desc" placeholder="Description" required style="width:100%; margin-bottom:10px;"></textarea>
                 <input type="text" id="event-location" placeholder="Location" style="width:100%; margin-bottom:10px;">
@@ -127,6 +129,20 @@
 
     document.getElementById('logout-btn').addEventListener('click', () => setLoggedIn(null));
 
+    function formatEventDateRange(startStr, endStr) {
+      if (!startStr) return '';
+      const s = new Date(startStr + 'T00:00:00');
+      if (!endStr || endStr === startStr) {
+        return s.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+      }
+      const e = new Date(endStr + 'T00:00:00');
+      const sameMonth = s.getMonth() === e.getMonth() && s.getFullYear() === e.getFullYear();
+      const sameYear = s.getFullYear() === e.getFullYear();
+      const startFmt = s.toLocaleDateString('en-GB', { day: 'numeric', month: sameMonth ? undefined : 'short' });
+      const endFmt = e.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: sameYear ? undefined : 'numeric' });
+      return `${startFmt} – ${endFmt}`;
+    }
+
     // Events
     async function loadEvents() {
   const list = document.getElementById('events-list');
@@ -139,13 +155,14 @@
       const row = document.createElement('div');
       row.className = 'event-row';
       const timeDisplay = event.event_time || 'Time will be updated';
+      const dateDisplay = formatEventDateRange(event.event_date, event.event_end_date);
       row.innerHTML = `
         <div class="ev-body">
           <div class="ev-name">${event.title}</div>
           <div class="ev-desc">${event.description}</div>
         </div>
         <div class="ev-right">
-          <span class="ev-date">${event.event_date} — ${timeDisplay}</span>
+          <span class="ev-date">${dateDisplay} — ${timeDisplay}</span>
           <span class="ev-link">${event.location || 'TBD'}</span>
           <span class="ev-action-link">
             ${event.action_link ? `<a href="${event.action_link}" target="_blank">${event.action_label || 'Action Link'}</a>` : 'No link'}
@@ -163,6 +180,7 @@
         document.getElementById('event-id').value = event.id;
         document.getElementById('event-title').value = event.title;
         document.getElementById('event-date').value = event.event_date;
+        document.getElementById('event-end-date').value = event.event_end_date || '';
         document.getElementById('event-time').value = event.event_time || '';
         document.getElementById('event-desc').value = event.description || '';
         document.getElementById('event-location').value = event.location || '';
@@ -207,6 +225,7 @@ document.getElementById('add-event-form').addEventListener('submit', async (e) =
   const id = document.getElementById('event-id').value;
   const title = document.getElementById('event-title').value;
   const date = document.getElementById('event-date').value;
+  const endDate = document.getElementById('event-end-date').value;
   const time = document.getElementById('event-time').value;
   const description = document.getElementById('event-desc').value;
   const location = document.getElementById('event-location').value;
@@ -219,7 +238,7 @@ document.getElementById('add-event-form').addEventListener('submit', async (e) =
     const response = await fetch(url, {
       method,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title, event_date: date, event_time: time, description, location, action_link: actionLink, action_label: actionLabel })
+      body: JSON.stringify({ title, event_date: date, event_end_date: endDate || null, event_time: time, description, location, action_link: actionLink, action_label: actionLabel })
     });
     const result = await response.json();
     if (response.ok) {

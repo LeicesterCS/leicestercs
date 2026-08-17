@@ -110,6 +110,20 @@
 
   <script src="nav.js"></script>
   <script>
+    function formatEventDateRange(startStr, endStr) {
+      if (!startStr) return '';
+      const s = new Date(startStr + 'T00:00:00');
+      if (!endStr || endStr === startStr) {
+        return s.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+      }
+      const e = new Date(endStr + 'T00:00:00');
+      const sameMonth = s.getMonth() === e.getMonth() && s.getFullYear() === e.getFullYear();
+      const sameYear = s.getFullYear() === e.getFullYear();
+      const startFmt = s.toLocaleDateString('en-GB', { day: 'numeric', month: sameMonth ? undefined : 'short' });
+      const endFmt = e.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: sameYear ? undefined : 'numeric' });
+      return `${startFmt} – ${endFmt}`;
+    }
+
     // Load events
     async function loadEvents() {
       const list = document.getElementById('events-list');
@@ -128,6 +142,7 @@
           const isOngoing = event.date === 'Ongoing';
           const tagClass = isOngoing ? 'ev-tag ongoing' : 'ev-tag live';
           const tagText = isOngoing ? 'ONGOING' : 'UPCOMING';
+          const dateDisplay = isOngoing ? event.date : formatEventDateRange(event.event_date, event.event_end_date);
           row.innerHTML = `
             <span class="${tagClass}">${tagText}</span>
             <div class="ev-body">
@@ -135,7 +150,7 @@
               <div class="ev-desc">${event.description}</div>
             </div>
             <div class="ev-right">
-              <span class="ev-date">${event.event_date || event.date}</span>
+              <span class="ev-date">${dateDisplay}</span>
               <span class="ev-link">${event.location || 'TBD'}</span>
               ${event.action_link ? `<a href="${event.action_link}" target="_blank" class="ev-action-link">${event.action_label || 'View Details'}</a>` : ''}
             </div>
