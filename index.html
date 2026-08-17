@@ -148,7 +148,7 @@
     <div class="container" style="padding-top:72px; padding-bottom:96px;">
       <div class="sec-label">EXPLORE</div>
       <h2 class="sec-title" style="margin-bottom:48px;">WHERE DO YOU<br/><span class="accent">WANT TO GO?</span></h2>
-      <div style="display:grid; grid-template-columns: repeat(3,1fr); gap:2px;">
+      <div class="ql-grid">
         <a href="about.html"    class="ql-card"><span class="ql-num teal">01</span><span class="ql-name">ABOUT</span><span class="ql-arr">→</span></a>
         <a href="events.html"   class="ql-card"><span class="ql-num pink">02</span><span class="ql-name">EVENTS</span><span class="ql-arr">→</span></a>
         <a href="gallery.html"  class="ql-card"><span class="ql-num teal">03</span><span class="ql-name">GALLERY</span><span class="ql-arr">→</span></a>
@@ -186,6 +186,7 @@
   </div><!-- end page-wrap -->
 
   <style>
+    .ql-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
     .ql-card {
       display: flex; flex-direction: column; gap: 12px;
       background: var(--bg-card); border: 1px solid var(--border);
@@ -199,8 +200,8 @@
     .ql-name { font-size: 0.65rem; color: var(--white); text-shadow: var(--glow-w); }
     .ql-arr  { font-size: 0.5rem; color: var(--grey); margin-top: auto; }
     .ql-card:hover .ql-arr { color: var(--teal); }
-    @media (max-width: 900px) { [style*="grid-template-columns: repeat(4"] { grid-template-columns: repeat(2,1fr) !important; } }
-    @media (max-width: 500px) { [style*="grid-template-columns: repeat(4"] { grid-template-columns: 1fr 1fr !important; } }
+    @media (max-width: 900px) { .ql-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 500px) { .ql-grid { grid-template-columns: 1fr; } }
 
     /* ===================================== */
     /* EVENT REMINDER POPUP                    */
