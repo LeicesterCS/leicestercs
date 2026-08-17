@@ -284,15 +284,15 @@
         const event = events[0]; // Get the first upcoming event
 
         widget.innerHTML = `
-          <div style="padding:72px; border:1px solid var(--border); background:var(--bg-card); display:flex; justify-content:space-between; align-items:flex-start; gap:24px;">
-            <div>
+          <div class="upcoming-event-card">
+            <div class="uec-left">
               <div class="sec-label" style="margin-bottom:20px;">UPCOMING</div>
-              <div style="font-size:1.5rem; color:var(--white); text-shadow:var(--glow-w); margin-bottom:12px;">${event.title}</div>
-              <div style="font-size:1rem; color:var(--grey);">${event.location || 'TBD'}</div>
+              <div class="uec-title">${event.title}</div>
+              <div class="uec-location">${event.location || 'TBD'}</div>
             </div>
-            <div style="text-align:right; white-space:nowrap;">
-              <div style="font-size:1.2rem; color:var(--grey);">${formatEventDateRange(event.event_date, event.event_end_date)}${event.event_time ? ` — ${event.event_time}` : ''}</div>
-              <a href="events.html" style="display:inline-block; margin-top:20px; font-size:1rem; color:var(--teal);">VIEW ALL EVENTS →</a>
+            <div class="uec-right">
+              <div class="uec-date">${formatEventDateRange(event.event_date, event.event_end_date)}${event.event_time ? ` — ${event.event_time}` : ''}</div>
+              <a href="events.html" class="uec-link">VIEW ALL EVENTS →</a>
             </div>
           </div>
         `;
