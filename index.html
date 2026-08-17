@@ -256,6 +256,20 @@
     // ===================================================
     // Load upcoming event into the inline homepage widget
     // ===================================================
+    function formatEventDateRange(startStr, endStr) {
+      if (!startStr) return '';
+      const s = new Date(startStr + 'T00:00:00');
+      if (!endStr || endStr === startStr) {
+        return s.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+      }
+      const e = new Date(endStr + 'T00:00:00');
+      const sameMonth = s.getMonth() === e.getMonth() && s.getFullYear() === e.getFullYear();
+      const sameYear = s.getFullYear() === e.getFullYear();
+      const startFmt = s.toLocaleDateString('en-GB', { day: 'numeric', month: sameMonth ? undefined : 'short' });
+      const endFmt = e.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: sameYear ? undefined : 'numeric' });
+      return `${startFmt} – ${endFmt}`;
+    }
+
     async function loadUpcomingEvent() {
       const widget = document.getElementById('upcoming-event-widget');
       try {
@@ -277,7 +291,7 @@
               <div style="font-size:1rem; color:var(--grey);">${event.location || 'TBD'}</div>
             </div>
             <div style="text-align:right; white-space:nowrap;">
-              <div style="font-size:1.2rem; color:var(--grey);">${event.event_date}${event.event_time ? ` — ${event.event_time}` : ''}</div>
+              <div style="font-size:1.2rem; color:var(--grey);">${formatEventDateRange(event.event_date, event.event_end_date)}${event.event_time ? ` — ${event.event_time}` : ''}</div>
               <a href="events.html" style="display:inline-block; margin-top:20px; font-size:1rem; color:var(--teal);">VIEW ALL EVENTS →</a>
             </div>
           </div>
@@ -306,7 +320,7 @@
         const event = events[0];
         document.getElementById('popup-title').textContent = event.title;
         document.getElementById('popup-meta').textContent =
-          `${event.event_date}${event.event_time ? ` — ${event.event_time}` : ''}`;
+          `${formatEventDateRange(event.event_date, event.event_end_date)}${event.event_time ? ` — ${event.event_time}` : ''}`;
 
         document.getElementById('event-popup-overlay').style.display = 'flex';
         sessionStorage.setItem('eventPopupSeen', 'true');
