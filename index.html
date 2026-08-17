@@ -32,6 +32,21 @@
 </head>
 <body>
 
+  <!-- ============================================= -->
+  <!-- EVENT REMINDER POPUP                            -->
+  <!-- Shown once per browser session if an upcoming   -->
+  <!-- event exists. Data comes from /api/events.      -->
+  <!-- ============================================= -->
+  <div id="event-popup-overlay" class="event-popup-overlay" style="display:none;">
+    <div class="event-popup">
+      <button class="event-popup-close" id="event-popup-close" aria-label="Close">×</button>
+      <div class="sec-label" style="margin-bottom:16px;">UPCOMING EVENT</div>
+      <div class="event-popup-title" id="popup-title"></div>
+      <div class="event-popup-meta" id="popup-meta"></div>
+      <a href="events.html" class="btn-primary" style="margin-top:24px; display:inline-block;">VIEW EVENTS →</a>
+    </div>
+  </div>
+
   <nav id="navbar">
     <div class="nav-inner">
       <a href="index.html" class="nav-logo">LeicesterCS</a>
@@ -124,9 +139,14 @@
       </a>
     </div>
 
+    <!-- UPCOMING EVENTS WIDGET -->
+    <div class="container" style="padding-top:56px; padding-bottom:56px;">
+      <div id="upcoming-event-widget"></div>
+    </div>
+
     <!-- QUICK LINKS GRID -->
     <div class="container" style="padding-top:72px; padding-bottom:96px;">
-      <div class="sec-label">// EXPLORE</div>
+      <div class="sec-label">EXPLORE</div>
       <h2 class="sec-title" style="margin-bottom:48px;">WHERE DO YOU<br/><span class="accent">WANT TO GO?</span></h2>
       <div style="display:grid; grid-template-columns: repeat(3,1fr); gap:2px;">
         <a href="about.html"    class="ql-card"><span class="ql-num teal">01</span><span class="ql-name">ABOUT</span><span class="ql-arr">→</span></a>
@@ -181,8 +201,131 @@
     .ql-card:hover .ql-arr { color: var(--teal); }
     @media (max-width: 900px) { [style*="grid-template-columns: repeat(4"] { grid-template-columns: repeat(2,1fr) !important; } }
     @media (max-width: 500px) { [style*="grid-template-columns: repeat(4"] { grid-template-columns: 1fr 1fr !important; } }
+
+    /* ===================================== */
+    /* EVENT REMINDER POPUP                    */
+    /* ===================================== */
+    .event-popup-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      padding: 24px;
+    }
+    .event-popup {
+      position: relative;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      max-width: 440px;
+      width: 100%;
+      padding: 40px 32px;
+      text-align: center;
+    }
+    .event-popup-title {
+      font-size: 1.4rem;
+      color: var(--white);
+      text-shadow: var(--glow-w);
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    .event-popup-meta {
+      font-size: 1rem;
+      color: var(--grey);
+      line-height: 1.5;
+    }
+    .event-popup-close {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      background: none;
+      border: none;
+      color: var(--grey);
+      font-size: 1.5rem;
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px 8px;
+    }
+    .event-popup-close:hover { color: var(--white); }
   </style>
 
   <script src="nav.js"></script>
+  <script>
+    // ===================================================
+    // Load upcoming event into the inline homepage widget
+    // ===================================================
+    async function loadUpcomingEvent() {
+      const widget = document.getElementById('upcoming-event-widget');
+      try {
+        const response = await fetch('/api/events');
+        const events = await response.json();
+
+        if (events.length === 0) {
+          widget.innerHTML = '<p>No upcoming events yet.</p>';
+          return;
+        }
+
+        const event = events[0]; // Get the first upcoming event
+
+        widget.innerHTML = `
+          <div style="padding:72px; border:1px solid var(--border); background:var(--bg-card); display:flex; justify-content:space-between; align-items:flex-start; gap:24px;">
+            <div>
+              <div class="sec-label" style="margin-bottom:20px;">UPCOMING</div>
+              <div style="font-size:1.5rem; color:var(--white); text-shadow:var(--glow-w); margin-bottom:12px;">${event.title}</div>
+              <div style="font-size:1rem; color:var(--grey);">${event.location || 'TBD'}</div>
+            </div>
+            <div style="text-align:right; white-space:nowrap;">
+              <div style="font-size:1.2rem; color:var(--grey);">${event.event_date}${event.event_time ? ` — ${event.event_time}` : ''}</div>
+              <a href="events.html" style="display:inline-block; margin-top:20px; font-size:1rem; color:var(--teal);">VIEW ALL EVENTS →</a>
+            </div>
+          </div>
+        `;
+      } catch (error) {
+        console.error('Error loading upcoming event:', error);
+        widget.innerHTML = '<p>Failed to load events.</p>';
+      }
+    }
+
+    // ===================================================
+    // Show the event reminder popup on page load.
+    // Uses sessionStorage so it only appears once per
+    // browser tab/session, not on every single page load.
+    // Swap sessionStorage -> localStorage for "once ever".
+    // Remove the "seen" check entirely for "every load".
+    // ===================================================
+    async function showEventPopup() {
+      if (sessionStorage.getItem('eventPopupSeen')) return;
+
+      try {
+        const response = await fetch('/api/events');
+        const events = await response.json();
+        if (events.length === 0) return;
+
+        const event = events[0];
+        document.getElementById('popup-title').textContent = event.title;
+        document.getElementById('popup-meta').textContent =
+          `${event.event_date}${event.event_time ? ` — ${event.event_time}` : ''}`;
+
+        document.getElementById('event-popup-overlay').style.display = 'flex';
+        sessionStorage.setItem('eventPopupSeen', 'true');
+      } catch (error) {
+        console.error('Error loading event popup:', error);
+      }
+    }
+
+    function closeEventPopup() {
+      document.getElementById('event-popup-overlay').style.display = 'none';
+    }
+
+    document.getElementById('event-popup-close').addEventListener('click', closeEventPopup);
+    document.getElementById('event-popup-overlay').addEventListener('click', (e) => {
+      if (e.target.id === 'event-popup-overlay') closeEventPopup();
+    });
+
+    loadUpcomingEvent();
+    showEventPopup();
+  </script>
 </body>
 </html>

@@ -64,7 +64,7 @@
   <div class="page-wrap">
     <div class="page-header">
       <div class="page-header-inner">
-        <div class="sec-label">// 02 — EVENTS</div>
+        <div class="sec-label">02 — EVENTS</div>
         <h1 class="sec-title">WHAT'S<br/><span class="accent">ON.</span></h1>
       </div>
     </div>
@@ -76,7 +76,7 @@
         </div>
 
         <div style="margin-top:48px; padding:32px; border:1px solid var(--border); background:var(--bg-card);">
-          <div class="sec-label" style="margin-bottom:16px;">// GOT AN IDEA FOR AN EVENT?</div>
+          <div class="sec-label" style="margin-bottom:16px;">GOT AN IDEA FOR AN EVENT?</div>
           <p style="font-size:0.48rem; color:var(--grey); line-height:2.2; margin-bottom:20px;">The best events come from members. Submit an idea and the committee will take a look.</p>
           <a href="ideas.html" class="btn-primary">SUBMIT AN IDEA →</a>
         </div>
@@ -135,8 +135,9 @@
               <div class="ev-desc">${event.description}</div>
             </div>
             <div class="ev-right">
-              <span class="ev-date">${event.date}</span>
+              <span class="ev-date">${event.event_date || event.date}</span>
               <span class="ev-link">${event.location || 'TBD'}</span>
+              ${event.action_link ? `<a href="${event.action_link}" target="_blank" class="ev-action-link">${event.action_label || 'View Details'}</a>` : ''}
             </div>
           `;
           list.appendChild(row);

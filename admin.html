@@ -32,7 +32,7 @@
 
         <!-- LOGIN -->
         <div id="login-section" style="max-width:420px; padding:32px; border:1px solid var(--border); background:var(--bg-card);">
-          <div class="sec-label" style="margin-bottom:16px;">// ADMIN LOGIN</div>
+          <div class="sec-label" style="margin-bottom:16px;">ADMIN LOGIN</div>
           <input type="password" id="admin-password" placeholder="Enter password" style="width:100%; margin-bottom:12px;">
           <button id="login-btn" class="btn-primary">LOGIN</button>
           <div id="login-error" style="display:none; color:#ff5c5c; font-size:0.5rem; margin-top:12px;">Invalid password</div>
@@ -48,7 +48,7 @@
           <!-- EVENTS -->
           <section id="panel-events">
             <div style="padding:32px; border:1px solid var(--border); background:var(--bg-card); margin-bottom:32px;">
-              <div class="sec-label" style="margin-bottom:16px;">// ADD NEW EVENT</div>
+              <div class="sec-label" style="margin-bottom:16px;">ADD NEW EVENT</div>
               <form id="add-event-form">
                 <input type="hidden" id="event-id" value="">
                 <input type="text" id="event-title" placeholder="Title" required style="width:100%; margin-bottom:10px;">
@@ -56,12 +56,14 @@
                 <input type="time" id="event-time" style="width:100%; margin-bottom:10px;">
                 <textarea id="event-desc" placeholder="Description" required style="width:100%; margin-bottom:10px;"></textarea>
                 <input type="text" id="event-location" placeholder="Location" style="width:100%; margin-bottom:10px;">
+                <input type="text" id="action-link" placeholder="Action Link (URL)" style="width:100%; margin-bottom:10px;">
+                <input type="text" id="action-label" placeholder="Action Label (e.g., Register, Buy Ticket)" style="width:100%; margin-bottom:10px;">
                 <button type="submit" id="event-submit-btn" class="btn-primary">ADD EVENT</button>
                 <button type="button" id="event-cancel-btn" style="display:none; margin-left:8px;">CANCEL</button>
               </form>
             </div>
 
-            <div class="sec-label" style="margin-bottom:16px;">// CURRENT EVENTS</div>
+            <div class="sec-label" style="margin-bottom:16px;">CURRENT EVENTS</div>
             <div id="events-list"></div>
           </section>
 
@@ -145,6 +147,9 @@
         <div class="ev-right">
           <span class="ev-date">${event.event_date} — ${timeDisplay}</span>
           <span class="ev-link">${event.location || 'TBD'}</span>
+          <span class="ev-action-link">
+            ${event.action_link ? `<a href="${event.action_link}" target="_blank">${event.action_label || 'Action Link'}</a>` : 'No link'}
+          </span>
           <button class="ev-edit-btn" data-id="${event.id}">EDIT</button>
           <button class="ev-delete-btn" data-id="${event.id}">DELETE</button>
         </div>
@@ -161,6 +166,8 @@
         document.getElementById('event-time').value = event.event_time || '';
         document.getElementById('event-desc').value = event.description || '';
         document.getElementById('event-location').value = event.location || '';
+        document.getElementById('action-link').value = event.action_link || '';
+        document.getElementById('action-label').value = event.action_label || '';
         document.getElementById('event-submit-btn').textContent = 'SAVE CHANGES';
         document.getElementById('event-cancel-btn').style.display = 'inline-block';
         window.scrollTo({ top: document.getElementById('add-event-form').offsetTop - 100, behavior: 'smooth' });
@@ -203,6 +210,8 @@ document.getElementById('add-event-form').addEventListener('submit', async (e) =
   const time = document.getElementById('event-time').value;
   const description = document.getElementById('event-desc').value;
   const location = document.getElementById('event-location').value;
+  const actionLink = document.getElementById('action-link').value;
+  const actionLabel = document.getElementById('action-label').value;
 
   try {
     const url = id ? `/api/events?id=${id}` : '/api/events';
@@ -210,7 +219,7 @@ document.getElementById('add-event-form').addEventListener('submit', async (e) =
     const response = await fetch(url, {
       method,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title, event_date: date, event_time: time, description, location })
+      body: JSON.stringify({ title, event_date: date, event_time: time, description, location, action_link: actionLink, action_label: actionLabel })
     });
     const result = await response.json();
     if (response.ok) {

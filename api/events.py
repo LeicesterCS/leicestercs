@@ -67,6 +67,8 @@ class handler(BaseHTTPRequestHandler):
                 "event_date": data.get("event_date"),
                 "event_time": data.get("event_time") or None,
                 "location": data.get("location"),
+                "action_link": data.get("action_link") or None,
+                "action_label": data.get("action_label") or None,
             }
 
             result = supabase.table("events").insert(new_event).execute()
@@ -95,6 +97,8 @@ class handler(BaseHTTPRequestHandler):
                 "event_date": data.get("event_date"),
                 "event_time": data.get("event_time") or None,
                 "location": data.get("location"),
+                "action_link": data.get("action_link") or None,
+                "action_label": data.get("action_label") or None,
             }
 
             result = (
