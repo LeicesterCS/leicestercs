@@ -73,17 +73,41 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.event-row').forEach(el => observer.observe(el));
 });
 
-// ─── PARTNER SCROLL GLOW ──────────────────────
+// ─── PARTNER SCROLL GLOW + MARQUEE DUPLICATION ────────────
+// (Combined: duplication must happen before we observe, and must use
+// cloneNode rather than innerHTML += so the original tiles aren't
+// destroyed/recreated — that was breaking both the hover/in-view glow
+// and causing the track's width to shift while images loaded.)
 const partnerObs = new IntersectionObserver(entries => {
   entries.forEach(e => e.target.classList.toggle('in-view', e.isIntersecting));
 }, { threshold: 0.6 });
-document.querySelectorAll('.partner').forEach(p => partnerObs.observe(p));
 
-// ─── PARTNERS MARQUEE DUPLICATION ────────────
 const track = document.querySelector('.marquee-track');
 if (track) {
-  const content = track.innerHTML;
-  track.innerHTML += content + content + content;
+  // Clone the original tiles instead of using innerHTML += (which
+  // rebuilds every node in the track, orphaning anything already
+  // referenced elsewhere, e.g. by the IntersectionObserver below).
+  const originalChildren = Array.from(track.children);
+  for (let i = 0; i < 3; i++) {
+    originalChildren.forEach(child => track.appendChild(child.cloneNode(true)));
+  }
+
+  // Now that originals + clones are all in their final place, observe them.
+  document.querySelectorAll('.partner').forEach(p => partnerObs.observe(p));
+
+  // Don't start the scrolling animation until every logo has actually
+  // loaded. Otherwise, on a slow/local connection, the track's total
+  // width keeps growing mid-animation (translateX(-50%) is relative to
+  // the track's current width), which makes the marquee look like it's
+  // crawling until everything finishes loading.
+  const imgs = track.querySelectorAll('img');
+  Promise.all(
+    Array.from(imgs).map(img =>
+      img.complete ? Promise.resolve() : new Promise(res => { img.onload = img.onerror = res; })
+    )
+  ).then(() => track.classList.add('marquee-ready'));
+} else {
+  document.querySelectorAll('.partner').forEach(p => partnerObs.observe(p));
 }
 
 // ─── TOAST NOTIFICATION ───────────────────────

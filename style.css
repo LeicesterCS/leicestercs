@@ -439,6 +439,10 @@ a:hover { color: var(--pink); }
   display: flex;
   width: max-content;
   animation: scrollMarquee 20s linear infinite;
+  animation-play-state: paused;
+}
+.marquee-track.marquee-ready {
+  animation-play-state: running;
 }
 @keyframes scrollMarquee {
   from { transform: translateX(0); }
