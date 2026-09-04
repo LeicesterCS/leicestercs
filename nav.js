@@ -264,4 +264,4 @@ document.querySelectorAll('.faq-item').forEach(item => {
     btn.setAttribute('aria-expanded', open);
     ans.style.maxHeight = open ? ans.scrollHeight + 'px' : '0';
   });
-});
+})
